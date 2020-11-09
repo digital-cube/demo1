@@ -1,0 +1,18 @@
+name: 'users'
+description: 'base3 application'
+prefix: 'api'
+app_version: '0.0.1'
+host: 'localhost'
+port: &port 9000
+
+#DB Settings
+db:
+  type: 'postgres'
+  port: 5432
+  host: 'localhost'
+  username: 'demo'
+  password: 'demo'
+  database: 'demo_users'
+
+log:
+  file: '/tmp/users.svc.log'
