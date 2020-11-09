@@ -1,0 +1,79 @@
+services:
+
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    hostname: redis
+    command: redis-server
+    labels:
+      NAME: redis
+
+      
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    env_file:
+      - dev.env
+      
+    environment:
+      - POSTGRES_DB=default
+
+    volumes:
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+
+
+  users:
+    container_name: users
+
+    build: 
+      context: .
+      dockerfile: Dockerfile.users
+
+    depends_on:
+      - redis
+      - postgres
+
+    env_file:
+      - dev.env
+      
+    environment:
+      - POSTGRES_DB=users
+      
+    command: /app/service.sh
+
+    ports:
+      - 10000:80
+
+    volumes:
+      - './users:/app'
+      - './storage:/storage'
+      - './base:/usr/local/lib/python3.8/site-packages/base'
+
+  application:
+    container_name: application
+
+    build: 
+      context: .
+      dockerfile: Dockerfile.application
+
+    depends_on:
+      - redis
+      - postgres
+
+    env_file:
+      - dev.env
+      
+    environment:
+      - POSTGRES_DB=application
+      
+    command: /app/service.sh
+
+    ports:
+      - 10001:80
+
+    volumes:
+      - './application:/app'
+      - './storage:/storage'
+      - './base:/usr/local/lib/python3.8/site-packages/base'
