@@ -168,7 +168,8 @@ class AdminSingleUsersHandler(base.Base):
         if not user:
             raise http.HttpErrorNotFound
 
-        return change_user_data(user, data, change_by=self.user)
+        logged_user = self.orm_session.query(models.User).filter(models.User.id == self.id_user).one_or_none()
+        return change_user_data(user, data, change_by=logged_user)
 
     @base.auth(permissions=perm.ADMIN)
     @base.api()
@@ -213,12 +214,14 @@ class UsersHandler(base.Base):
     @base.auth()
     @base.api()
     async def get(self):
-        return self.user.serialize()
+        logged_user = self.orm_session.query(models.User).filter(models.User.id == self.id_user).one_or_none()
+        return logged_user.serialize()
 
     @base.auth()
     @base.api()
     async def patch(self, data: dict):
-        return change_user_data(self.user, data)
+        logged_user = self.orm_session.query(models.User).filter(models.User.id == self.id_user).one_or_none()
+        return change_user_data(logged_user, data)
 
 
 @base.route('/sessions')

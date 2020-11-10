@@ -9,7 +9,7 @@ authorization:
   key: 'Authorization'
 
 store:
-  type: 'memory'
+  type: 'redis'
 
 #DB Settings
 db:
@@ -21,4 +21,6 @@ db:
   database: 'demo_users'
 
 log:
+  console: true
+  level: 'debug'
   file: '/tmp/users.svc.log'
