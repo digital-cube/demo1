@@ -37,7 +37,8 @@ def allow_password(user, password):
     if len(password) < 6:
         raise base.http.HttpInvalidParam(
             id_message='PASSWORD_FORMAT',
-            message="Password should contains minimum 6 characters")
+            message="Password should contains minimum 6 characters",
+        )
 
     return True
 
