@@ -1,9 +1,11 @@
 name: 'users'
 description: 'base3 application'
-prefix: 'api'
+prefix: '/api/users'
 app_version: '0.0.1'
 host: 'localhost'
 port: &port 9000
+store:
+  type: 'memory'
 
 #DB Settings
 db:
