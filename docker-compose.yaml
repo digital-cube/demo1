@@ -51,29 +51,30 @@ services:
       - './storage:/storage'
       - './base:/usr/local/lib/python3.8/site-packages/base'
 
-  application:
-    container_name: application
-
-    build: 
-      context: .
-      dockerfile: Dockerfile.application
-
-    depends_on:
-      - redis
-      - postgres
-
-    env_file:
-      - dev.env
-      
-    environment:
-      - POSTGRES_DB=application
-      
-    command: /app/service.sh
-
-    ports:
-      - 10001:80
-
-    volumes:
-      - './application:/app'
-      - './storage:/storage'
-      - './base:/usr/local/lib/python3.8/site-packages/base'
+#  application:
+#    container_name: application
+#
+#    build: 
+#      context: .
+#      dockerfile: Dockerfile.application
+#
+#    depends_on:
+#      - redis
+#      - postgres
+#
+#    env_file:
+#      - dev.env
+#      
+#    environment:
+#      - POSTGRES_DB=application
+#      
+#    command: /app/service.sh
+#
+#    ports:
+#      - 10001:80
+#
+#    volumes:
+#      - './application:/app'
+#      - './storage:/storage'
+#      - './base:/usr/local/lib/python3.8/site-packages/base'
+#

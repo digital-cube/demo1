@@ -16,26 +16,8 @@ class SetUpTestUserServiceBase(test.BaseTest):
         return '/api/users'
 
     def setUp(self):
-        # import redis
-        # r = redis.Redis()
-        # r.flushall()
-
         from base import registry, Base, orm, app, config
-
-        # import config
-        # import _config
-
-        # print('RRR config.db_config', config.db_config['database'])
-
-        # _config.db_config = config.db_config
-
-        # _config.db_config['database'] = 'test_' + config.db_config['database']
-        # _config.db_config['database'] = 'test_demo_users'  # ?!!?!
-
-        # print('RRR2 _config.db_config', _config.db_config['database'])
-
         config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + '/../config/config.yaml')
-
         config.conf['db']['database'] = f"test_{config.conf['db']['database']}"
 
         # registry.register({'name': 'users',
@@ -45,19 +27,13 @@ class SetUpTestUserServiceBase(test.BaseTest):
         #                    })
 
         importlib.import_module('orm.models')
-
         registry.test = True
 
         # db_config = registry.db('users')
 
-        # print("INICIRAM ORM", _config.db_config['database'])
-
         orm = orm.init_orm(config.conf['db'])
 
-        # print("BRISEM CELU BAZU")
         orm.clear_database()
-
-        # print("KREIRAM TABELE")
         orm.create_db_schema()
 
         importlib.import_module('api.users')
@@ -65,8 +41,6 @@ class SetUpTestUserServiceBase(test.BaseTest):
 
         super().setUp()
         registry.test_port = self.get_http_port()
-
-        # app.route.print_all_routes()
 
 
 if __name__ == '__main__':
