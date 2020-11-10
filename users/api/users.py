@@ -8,7 +8,7 @@ import datetime
 import lookup.user_permissions as perm
 import sqlalchemy
 
-from base import base_redis as redis
+from base import Store as store
 
 base.route.set('prefix', '/api/users')
 
@@ -241,8 +241,7 @@ class SessionsHandler(base.Base):
         self.orm_session.add(session)
         self.orm_session.commit()
 
-        r = redis.Redis()
-        r.set(session.id, 1)
+        store.set(session.id, 1)
 
         return {'id': session.id,
                 'token': session.jwt}, http.status.CREATED
@@ -251,8 +250,7 @@ class SessionsHandler(base.Base):
     @base.api()
     async def delete(self):
 
-        r = redis.Redis()
-        r.set(self.id_session, 0)
+        store.set(self.id_session, 0)
 
         session = self.orm_session.query(models.Session).filter(models.Session.id == self.id_session).one_or_none()
         if session:
@@ -288,10 +286,7 @@ class ForgotPasswordHandler(base.Base):
 
         # TODO: Send email via mail queue service and return None
 
-        from base import base_redis
-        redis = base_redis.Redis()
-
-        redis.set('tmp_test_last_reset_password_id', reset_passwod.id)
+        store.set('tmp_test_last_reset_password_id', reset_passwod.id)
 
         return None
         # return {'id': reset_passwod.id}
