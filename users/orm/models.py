@@ -18,6 +18,8 @@ class User(orm.BaseSql, orm.sql_base):
     username = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
 
+    active = Column(Boolean, nullable=False, default=True)
+
     email = Column(String)
     first_name = Column(String)
     last_name = Column(String)
@@ -61,3 +63,13 @@ class Session(orm.BaseSql, orm.sql_base):
 
         # this attribute will not be saved to DB
         self.jwt = encoded.decode('ascii')
+
+
+class ForgotPasswordId(orm.BaseSql, orm.sql_base):
+    __tablename__ = 'forgot_password_ids'
+
+    id_user = Column(ForeignKey(User.id), nullable=False, index=True)
+    user = relationship(User, uselist=False, foreign_keys=[id_user])
+
+    expired = Column(DateTime, nullable=True, default=None, index=True)
+

@@ -6,10 +6,9 @@ import bcrypt
 import orm.models as models
 import datetime
 import lookup.user_permissions as perm
-import re
+import sqlalchemy
 
-# import orm.orm
-
+from base import base_redis as redis
 
 base.route.set('prefix', '/api/users')
 
@@ -43,17 +42,101 @@ def allow_password(user, password):
     return True
 
 
-@base.route('/')
-class UsersHandler(base.Base):
+def change_user_data(user: models.User, data: dict, change_by: models.User = None):
+    orm_session = sqlalchemy.inspect(user).session
+
+    if not change_by:
+        change_by = user
+
+    password_changed = False
+
+    def can_change_password():
+        # if user tries to change his own password, user need to provide old password
+        if 'password' in data:
+            if 'old_password' not in data:
+                raise http.HttpErrorUnauthorized(id_message='MISSING_PARAM_OLD_PASSWORD',
+                                                 message='Old password is mandatory parameter for changig password')
+
+            if not check_password(user, data['old_password']):
+                raise http.HttpErrorUnauthorized
+
+            del data['old_password']
+
+            return True
+
+        return None
+
+    def user_change_his_own_password():
+        if can_change_password():
+            plain_password = data['password']
+
+            if allow_password(user, plain_password):
+                user.password = plain_password
+                user.password = encrypt_password(user)
+                del data['password']
+
+                return True
+
+        return False
+
+    can_change = ['email', 'first_name', 'last_name', 'password']
+
+    # if user is not admin, user can change properties only for himself
+    if change_by.permission_flags & perm.ADMIN == 0:
+        if change_by.id != user.id:
+            raise http.HttpErrorUnauthorized
+
+        if user_change_his_own_password():
+            password_changed = True
+
+    else:
+        # if user is admin, then admin can change permission flag to
+        can_change += ['permission_flags']
+
+        if 'password' in data:
+            # if admin tries to change his own password, admin need to provide old password as well
+            if change_by.id == user.id:
+                if user_change_his_own_password():
+                    password_changed = True
+
+            else:
+                # admin can change users password without old password
+                # admin can set any password to target user, avoiding allow_password()
+
+                plain_password = data['password']
+                user.password = plain_password
+                user.password = encrypt_password(user)
+                del data['password']
+                password_changed = True
+
+    # restricting parameters to can_change
+    data = {p: data[p] for p in data if p in can_change}
+
+    updated = user.update(data)
+    if password_changed:
+        updated += ['password']
+
+    if updated:
+        try:
+            orm_session.commit()
+        except:
+            orm_session.rollback()
+            raise http.HttpInternalServerError(id_message='DATABASE_UPDATE_ERROR',
+                                               message='Problem updateing user')
+
+    return updated
+
+
+@base.route('/admin')
+class AdminHandler(base.Base):
 
     @base.auth(permissions=perm.ADMIN)
     @base.api()
     async def get(self, page: int = 1, per_page: int = 10, permission_flags: int = None,
                   fields='id,username,email,first_name,last_name'):
-
         fields = fields.replace(' ', '').split(',') if fields else []
 
-        filters = []
+        filters = [models.User.active == True]
         if permission_flags is not None:
             filters.append(models.User.permission_flags.op('&')(permission_flags) != 0)
 
@@ -64,6 +147,44 @@ class UsersHandler(base.Base):
                 'users': [user.serialize(fields) for user in query]}
 
         pass
+
+
+@base.route('/admin/:id_user')
+class AdminSingleUsersHandler(base.Base):
+
+    @base.auth(permissions=perm.ADMIN)
+    @base.api()
+    async def get(self, user: models.User.id, fields='id,username,email,first_name,last_name'):
+        if not user:
+            raise http.HttpErrorNotFound
+
+        fields = fields.replace(' ', '').split(',') if fields else []
+
+        return user.serialize(fields)
+
+    @base.auth(permissions=perm.ADMIN)
+    @base.api()
+    async def patch(self, user: models.User.id, data: dict):
+
+        if not user:
+            raise http.HttpErrorNotFound
+
+        return change_user_data(user, data, change_by=self.user)
+
+    @base.auth(permissions=perm.ADMIN)
+    @base.api()
+    async def delete(self, user: models.User.id):
+
+        if not user:
+            raise http.HttpErrorNotFound
+
+        user.username = f'removed;{user.id};{user.username}'
+        user.active = False
+        self.orm_session.commit()
+
+
+@base.route('/')
+class UsersHandler(base.Base):
 
     @base.api()
     async def post(self, user: models.User):
@@ -90,13 +211,24 @@ class UsersHandler(base.Base):
 
         return {'id': user.id}, http.status.CREATED
 
+    @base.auth()
+    @base.api()
+    async def get(self):
+        return self.user.serialize()
+
+    @base.auth()
+    @base.api()
+    async def patch(self, data: dict):
+        return change_user_data(self.user, data)
+
 
 @base.route('/sessions')
 class SessionsHandler(base.Base):
     @base.api()
     async def post(self, username: str, password: str):
         user = self.orm_session.query(models.User). \
-            filter(models.User.username == username).one_or_none()
+            filter(models.User.username == username,
+                   models.User.active == True).one_or_none()
 
         if not user:
             raise base.http.HttpErrorUnauthorized
@@ -108,7 +240,6 @@ class SessionsHandler(base.Base):
         self.orm_session.add(session)
         self.orm_session.commit()
 
-        import redis
         r = redis.Redis()
         r.set(session.id, 1)
 
@@ -119,7 +250,6 @@ class SessionsHandler(base.Base):
     @base.api()
     async def delete(self):
 
-        import redis
         r = redis.Redis()
         r.set(self.id_session, 0)
 
@@ -135,100 +265,61 @@ class SessionsHandler(base.Base):
         return None
 
 
-@base.route('/:id_user')
-class SingleUsersHandler(base.Base):
-
-    @base.auth()
+@base.route('/forgot')
+class ForgotPasswordHandler(base.Base):
     @base.api()
-    async def get(self, user: models.User.id, fields='id,username,email,first_name,last_name'):
+    async def post(self, username: str):
+        user = self.orm_session.query(models.User).filter(
+            models.User.username == username.lower().strip()).one_or_none()
+
+        # if there is no user found, OK - 201 NO Content is response, because of potential hacking
         if not user:
-            raise http.HttpErrorNotFound
-
-        fields = fields.replace(' ', '').split(',') if fields else []
-
-        return user.serialize(fields)
-
-    @base.auth()
-    @base.api()
-    async def patch(self, user: models.User.id, data: dict):
-
-        if not user:
-            raise http.HttpErrorNotFound
-
-        password_changed = False
-
-        def can_change_password():
-            # if user tries to change his own password, user need to provide old password
-            if 'password' in data:
-                if 'old_password' not in data:
-                    raise http.HttpErrorUnauthorized(id_message='MISSING_PARAM_OLD_PASSWORD',
-                                                     message='Old password is mandatory parameter for changig password')
-
-                if not check_password(user, data['old_password']):
-                    raise http.HttpErrorUnauthorized
-
-                del data['old_password']
-
-                return True
-
             return None
 
-        def user_change_his_own_password():
-            if can_change_password():
-                plain_password = data['password']
+        reset_passwod = models.ForgotPasswordId(user=user)
+        self.orm_session.add(reset_passwod)
 
-                if allow_password(user, plain_password):
-                    user.password = plain_password
-                    user.password = encrypt_password(user)
-                    del data['password']
+        try:
+            self.orm_session.commit()
+        except:
+            self.orm_session.rollback()
+            raise http.HttpInternalServerError
 
-                    return True
+        # TODO: Send email via mail queue service and return None
 
-            return False
+        from base import base_redis
+        redis = base_redis.Redis()
 
-        can_change = ['email', 'first_name', 'last_name', 'password']
+        redis.set('tmp_test_last_reset_password_id', reset_passwod.id)
 
-        # if user is not admin, user can change properties only for himself
-        if self.user.permission_flags & perm.ADMIN == 0:
-            if self.user.id != user.id:
-                raise http.HttpErrorUnauthorized
+        return None
+        # return {'id': reset_passwod.id}
 
-            if user_change_his_own_password():
-                password_changed = True
 
-        else:
-            # if user is admin, then admin can change permission flag to
-            can_change += ['permission_flags']
+@base.route('/reset/:id_forgot')
+class ResetPasswordHandler(base.Base):
 
-            if 'password' in data:
-                # if admin tries to change his own password, admin need to provide old password as well
-                if self.user.id == user.id:
-                    if user_change_his_own_password():
-                        password_changed = True
+    @base.api()
+    async def post(self, forgot: models.ForgotPasswordId.id, password: str):
 
-                else:
-                    # admin can change users password without old password
-                    # admin can set any password to target user, avoiding allow_password()
+        if not forgot:
+            return None
 
-                    plain_password = data['password']
-                    user.password = plain_password
-                    user.password = encrypt_password(user)
-                    del data['password']
-                    password_changed = True
+        if forgot.expired:
+            raise http.HttpErrorUnauthorized(id_message='FORGOT_PASSWORD_CODE_EXPIRED_OR_USED',
+                                             message='Forgot password code has expired, or already used')
 
-        # restricting parameters to can_change
-        data = {p: data[p] for p in data if p in can_change}
+        user = forgot.user
+        allow_password(user, password)
 
-        updated = user.update(data)
-        if password_changed:
-            updated += ['password']
+        user.password = password
+        user.password = encrypt_password(user)
+        forgot.expired = datetime.datetime.now()
 
-        if updated:
-            try:
-                self.orm_session.commit()
-            except:
-                self.orm_session.rollback()
-                raise http.HttpInternalServerError(id_message='DATABASE_UPDATE_ERROR',
-                                                   message='Problem updateing user')
+        try:
+            self.orm_session.commit()
+        except:
+            self.orm_session.rollback()
+            raise http.HttpInternalServerError
 
-        return updated
+        return None

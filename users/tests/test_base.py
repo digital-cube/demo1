@@ -6,6 +6,8 @@ import os
 
 current_file_folder = os.path.dirname(os.path.realpath(__file__))
 
+# from unittest.mock import patch
+
 
 class SetUpTestUserServiceBase(test.BaseTest):
 
@@ -13,9 +15,9 @@ class SetUpTestUserServiceBase(test.BaseTest):
         return '/api/users'
 
     def setUp(self):
-        import redis
-        r = redis.Redis()
-        r.flushall()
+        # import redis
+        # r = redis.Redis()
+        # r.flushall()
 
         from base import registry, Base, orm, app
 
@@ -27,10 +29,9 @@ class SetUpTestUserServiceBase(test.BaseTest):
         _config.db_config = config.db_config
 
         # _config.db_config['database'] = 'test_' + config.db_config['database']
-        _config.db_config['database'] = 'test_demo_users' # ?!!?!
+        _config.db_config['database'] = 'test_demo_users'  # ?!!?!
 
         # print('RRR2 _config.db_config', _config.db_config['database'])
-
 
         registry.register({'name': 'users',
                            'prefix': '/api/users',
