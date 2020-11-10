@@ -306,8 +306,8 @@ class TestUsersWithRegisteredAdminAndTwoNonAdminUsers(SetuUpTestUsersWithRegiste
 
         self.api(None, 'POST', self.prefix() + f'/forgot?username=user2', expected_code=http.status.NO_CONTENT)
 
-        from base import Store
-        tmp_test_last_reset_password_id = Store.get('tmp_test_last_reset_password_id').decode('ascii')
+        from base import store
+        tmp_test_last_reset_password_id = store.get('tmp_test_last_reset_password_id').decode('ascii')
 
         self.api(None, 'POST', self.prefix() + f'/reset/{tmp_test_last_reset_password_id}', body={
             'password': THE_PASSWORD + '-new'

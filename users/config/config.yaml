@@ -4,6 +4,10 @@ prefix: '/api/users'
 app_version: '0.0.1'
 host: 'localhost'
 port: &port 9000
+
+authorization:
+  key: 'Authorization'
+
 store:
   type: 'memory'
 

@@ -20,7 +20,7 @@ class SetUpTestUserServiceBase(test.BaseTest):
         # r = redis.Redis()
         # r.flushall()
 
-        from base import registry, Base, orm, app
+        from base import registry, Base, orm, app, config
 
         # import config
         # import _config
@@ -34,9 +34,6 @@ class SetUpTestUserServiceBase(test.BaseTest):
 
         # print('RRR2 _config.db_config', _config.db_config['database'])
 
-        import base
-
-        config = base.config
         config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + '/../config/config.yaml')
 
         config.conf['db']['database'] = f"test_{config.conf['db']['database']}"
