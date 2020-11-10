@@ -6,9 +6,9 @@ from base import orm, config
 # from _config import db_config
 
 def session():
-    print(config.conf['db'])
-    if not orm._orm or config.conf['db'] not in orm._orm:
-        orm.activate_orm(config.conf['db'])
+    if not orm._orm or config.conf['db']['database'] not in orm._orm:
+        dbc = config.conf['db']
+        orm.activate_orm(dbc)
 
     _session = orm._orm[config.conf['db']['database']].session()
 

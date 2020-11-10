@@ -6,6 +6,7 @@ import os
 
 current_file_folder = os.path.dirname(os.path.realpath(__file__))
 
+
 # from unittest.mock import patch
 
 
@@ -21,23 +22,30 @@ class SetUpTestUserServiceBase(test.BaseTest):
 
         from base import registry, Base, orm, app
 
-        import config
-        import _config
+        # import config
+        # import _config
 
         # print('RRR config.db_config', config.db_config['database'])
 
-        _config.db_config = config.db_config
+        # _config.db_config = config.db_config
 
         # _config.db_config['database'] = 'test_' + config.db_config['database']
-        _config.db_config['database'] = 'test_demo_users'  # ?!!?!
+        # _config.db_config['database'] = 'test_demo_users'  # ?!!?!
 
         # print('RRR2 _config.db_config', _config.db_config['database'])
 
-        registry.register({'name': 'users',
-                           'prefix': '/api/users',
-                           'port': None,
-                           # "db": _config.db_config
-                           })
+        import base
+
+        config = base.config
+        config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + '/../config/config.yaml')
+
+        config.conf['db']['database'] = f"test_{config.conf['db']['database']}"
+
+        # registry.register({'name': 'users',
+        #                    'prefix': '/api/users',
+        #                    'port': None,
+        #                    # "db": _config.db_config
+        #                    })
 
         importlib.import_module('orm.models')
 
@@ -46,7 +54,8 @@ class SetUpTestUserServiceBase(test.BaseTest):
         # db_config = registry.db('users')
 
         # print("INICIRAM ORM", _config.db_config['database'])
-        orm = orm.init_orm(_config.db_config)
+
+        orm = orm.init_orm(config.conf['db'])
 
         # print("BRISEM CELU BAZU")
         orm.clear_database()
