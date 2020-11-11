@@ -16,7 +16,13 @@ class TestRouteHandler(base.Base):
 
     @base.api()
     async def get(self):
-        return {'test': True}
+        self.helper()
+        # raise http.HttpInternalServerError(message='test')
+        # return {'test': True}
+
+    def helper(self):
+        print('test')
+        raise http.HttpInternalServerError(message='test')
 
 
 def format_password(user, password):
