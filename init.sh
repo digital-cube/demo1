@@ -2,7 +2,6 @@ git clone https://github.com/digital-cube/BASE.git base
 cd base
 git checkout devel
 cd -
-echo 'AuthorizationKey="Authorization"' > ./base/src/base/authorization.py
 
 
 cd users
