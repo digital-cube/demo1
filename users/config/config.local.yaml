@@ -33,7 +33,7 @@ logging:
   handlers:
     console:
       class: logging.StreamHandler
-      level: WARNING
+      level: CRITICAL
       formatter: brief
       stream: ext://sys.stdout
     file:

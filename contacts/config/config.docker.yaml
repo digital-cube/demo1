@@ -21,6 +21,47 @@ db:
   password: 'demo'
   database: 'contacts'
 
-log:
-  console: true
-  file: '/tmp/log_contacts'
+logging:
+  version: 1
+  request_logger: base
+  formatters:
+    brief:
+      format: '%(asctime)s %(name)s %(levelname)s : %(message)s'
+    detailed:
+      format: 'time="%(asctime)s" logger="%(name)s" level="%(levelname)s" %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: CRITICAL
+      formatter: brief
+      stream: ext://sys.stdout
+    file:
+      class : logging.handlers.RotatingFileHandler
+      level: DEBUG
+      formatter: detailed
+      filename: /tmp/base_app.log
+      backupCount: 3
+  loggers:
+    base:
+      level: DEBUG
+      handlers:
+        - console
+        - file
+      propagate: no
+    tornado.access:
+      level: DEBUG
+      handlers:
+        - file
+    tornado.application:
+      level: DEBUG
+      handlers:
+        - file
+    tornado.general:
+      level: DEBUG
+      handlers:
+        - file
+  root:
+    level: WARNING
+    handlers:
+      - console
+

@@ -131,6 +131,14 @@ def change_user_data(user: models.User, data: dict, change_by: models.User = Non
 
     return updated
 
+@base.route('/permissions'):
+class PermissionsHandler(base.Base):
+
+    @base.api()
+    async def get(self):
+
+        import lookup.user_permissions as permissions
+
 
 @base.route('/admin')
 class AdminHandler(base.Base):
