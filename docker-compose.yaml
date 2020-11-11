@@ -18,6 +18,8 @@ services:
       - dev.env
       
     environment:
+      - POSTGRES_USER=demo
+      - POSTGRES_PASSWORD=demo
       - POSTGRES_DB=default
 
     volumes:
@@ -39,7 +41,7 @@ services:
       - dev.env
       
     environment:
-      - POSTGRES_DB=users
+      - ENVIRONMENT=docker
       
     command: /app/service.sh
 
@@ -51,30 +53,29 @@ services:
       - './storage:/storage'
       - './base:/usr/local/lib/python3.8/site-packages/base'
 
-#  application:
-#    container_name: application
-#
-#    build: 
-#      context: .
-#      dockerfile: Dockerfile.application
-#
-#    depends_on:
-#      - redis
-#      - postgres
-#
-#    env_file:
-#      - dev.env
-#      
-#    environment:
-#      - POSTGRES_DB=application
-#      
-#    command: /app/service.sh
-#
-#    ports:
-#      - 10001:80
-#
-#    volumes:
-#      - './application:/app'
-#      - './storage:/storage'
-#      - './base:/usr/local/lib/python3.8/site-packages/base'
-#
+  contacts:
+    container_name: contacts
+
+    build:
+      context: .
+      dockerfile: Dockerfile.contacts
+
+    depends_on:
+      - redis
+      - postgres
+
+    env_file:
+      - dev.env
+
+    environment:
+      - ENVIRONMENT=docker
+
+    command: /app/service.sh
+
+    ports:
+      - 10001:80
+
+    volumes:
+      - './contacts:/app'
+      - './storage:/storage'
+      - './base:/usr/local/lib/python3.8/site-packages/base'

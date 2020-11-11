@@ -15,7 +15,7 @@ from base import orm
 import orm.models as models
 
 config = base.config
-config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + '/../config/config.yaml')
+config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + f'/../config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
 
 db_config=config.conf['db']
 

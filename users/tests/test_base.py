@@ -17,7 +17,7 @@ class SetUpTestUserServiceBase(test.BaseTest):
 
     def setUp(self):
         from base import registry, Base, orm, app, config
-        config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + '/../config/config.yaml')
+        config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + f'/../config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
         config.conf['db']['database'] = f"test_{config.conf['db']['database']}"
 
         # registry.register({'name': 'users',

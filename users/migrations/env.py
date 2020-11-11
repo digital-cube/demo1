@@ -7,6 +7,7 @@ from alembic import context
 
 import os
 import sys
+
 _project_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(_project_path)
 
@@ -15,26 +16,26 @@ from base import orm
 import orm.models as models
 
 config = base.config
-config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + '/../config/config.yaml')
+config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + f'/../config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
 
-db_config=config.conf['db']
+db_config = config.conf['db']
 
 # print(f'alembic: {db_config["type"]}://{db_config["username"]}:...@{db_config["host"]}:{db_config["port"]}/{db_config["database"]}')
 sqlalchemy_url = f'{db_config["type"]}://{db_config["username"]}:{db_config["password"]}@{db_config["host"]}:{db_config["port"]}/{db_config["database"]}'
 orm_builder = orm.init_orm(db_config)
 orm.sql_base.metadata.reflect(bind=orm_builder.orm().engine())
-target_metadata = orm.sql_base.metadata								# remove 'target_metadata = None'
+target_metadata = orm.sql_base.metadata  # remove 'target_metadata = None'
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option('sqlalchemy.url',sqlalchemy_url)
-
+config.set_main_option('sqlalchemy.url', sqlalchemy_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
+
 
 # add your model's MetaData object here
 # for 'autogenerate' support

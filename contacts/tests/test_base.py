@@ -26,7 +26,7 @@ class SetUpTestContactServiceBase(test.BaseTest):
     def setUp(self):
         from base import registry, orm, app, config
 
-        config.load_from_yaml(current_file_folder + '/../config/config.yaml')
+        config.load_from_yaml(current_file_folder + f'/../config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
         config.conf['db']['database'] = f"test_{config.conf['db']['database']}"
 
         importlib.import_module('orm.models')

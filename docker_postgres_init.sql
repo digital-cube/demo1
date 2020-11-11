@@ -1,2 +1,2 @@
 create database users;
-create database application;
+create database contacts;

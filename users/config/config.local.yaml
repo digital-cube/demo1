@@ -1,0 +1,27 @@
+name: 'users'
+description: 'base3 application'
+prefix: '/api/users'
+app_version: '0.0.1'
+host: 'localhost'
+port: &port 9000
+
+store:
+  type: 'redis'
+  host: 'localhost'
+  port: '6379'
+
+
+db:
+  type: 'postgres'
+  port: 5432
+  host: 'localhost'
+  username: 'demo'
+  password: 'demo'
+  database: 'demo_users'
+
+authorization:
+  key: 'Authorization'
+
+log:
+  console: true
+  file: '/tmp/log_users.log'

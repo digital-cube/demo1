@@ -2,19 +2,22 @@ name: 'users'
 description: 'base3 application'
 prefix: '/api/users'
 app_version: '0.0.1'
-host: 'localhost'
-port: &port 9000
+host: 'users'
+port: &port 80
 
 store:
   type: 'redis'
+  host: 'redis'
+  port: '6379'
+
 
 db:
   type: 'postgres'
   port: 5432
-  host: 'localhost'
+  host: 'postgres'
   username: 'demo'
   password: 'demo'
-  database: 'demo_users'
+  database: 'users'
 
 authorization:
   key: 'Authorization'
