@@ -125,13 +125,14 @@ def change_user_data(user: models.User, data: dict, change_by: models.User = Non
 
     return updated
 
-@base.route('/permissions'):
+
+@base.route('/permissions')
 class PermissionsHandler(base.Base):
 
     @base.api()
     async def get(self):
-
-        import lookup.user_permissions as permissions
+        from lookup.user_permissions import all_permissions
+        return all_permissions()
 
 
 @base.route('/admin')

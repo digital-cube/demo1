@@ -9,6 +9,16 @@ import lookup.user_permissions as perm
 from unittest.mock import patch
 
 
+class TestUserPermissions(SetUpTestUserServiceBase):
+
+    def test(self):
+        self.api(None, 'GET', self.prefix() + '/permissions', expected_code=http.status.OK,
+                 expected_result={
+                     "USER": 1,
+                     "ADMIN": 2
+                 })
+
+
 class TestUsersCreatingAdminUser(SetUpTestUserServiceBase):
 
     def test_unauthorized_user_tries_to_fetch_list_of_all_users(self):

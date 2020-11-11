@@ -1,4 +1,5 @@
-
+jwt.private_key
+jwt.public_key
 .venv
 .idea
 base

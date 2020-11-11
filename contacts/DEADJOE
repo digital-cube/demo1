@@ -1,0 +1,234 @@
+
+*** These modified files were found in JOE when it aborted on Wed Nov 11 17:16:34 2020
+*** JOE was aborted by UNIX signal 1
+
+*** File 'config/config.local.yaml'
+name: 'contacts demo'
+description: 'base3 application'
+prefix: '/api/contacts'
+app_version: '0.0.1'
+host: 'localhost'
+port: &port 9001
+
+store:
+  type: 'redis'
+  host: 'localhost'
+  port: 6
+*** These modified files were found in JOE when it aborted on Wed Nov 11 17:16:34 2020
+*** JOE was aborted by UNIX signal 1
+
+
+authorization:
+  key: 'Authorization'
+
+db:
+  type: 'postgres'
+  port: 5432
+  host: 'localhost'
+  username: 'demo'
+  password: 'demo'
+  database: 'demo_contacts'
+
+logging:
+  version: 1
+  request_logger: base
+  formatters:
+    brief:
+      format: '%(asctime)s %(name)s %(levelname)s : %(message)s'
+    detailed:
+      format: 'time="%(asctime)s" logger="%(name)s" level="%(levelname)s" %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: CRITICAL
+      formatter: brief
+      stream: ext://sys.stdout
+    file:
+      class : logging.handlers.RotatingFileHandler
+      level: DEBUG
+      formatter: detailed
+      filename: /tmp/base_app.log
+      backupCount: 3
+  loggers:
+    base:
+      level: DEBUG
+      handlers:
+        - console
+        - file
+      propagate: no
+    tornado.access:
+      level: DEBUG
+      handlers:
+        - file
+    tornado.application:
+      level: DEBUG
+      handlers:
+        - file
+    tornado.general:
+      level: DEBUG
+      handlers:
+        - file
+  root:
+    level: WARNING
+    handlers:
+      - console
+
+*** File 'config/config.local.yaml'
+
+*** File '(Unnamed)'
+name: 'contacts demo'
+description: 'base3 application'
+prefix: '/api/contacts'
+app_version: '0.0.1'
+host: 'localhost'
+port: &port 9001
+
+store:
+  type: 'redis'
+  host: 'localhost'
+  port: 6\n#
+\n#!
+blog
+
+"
+\n#
+0.1
+\n#
+contacts
+contacts
+
+
+authorization:
+  key: 'Authorization'
+
+db:
+  type: 'postgres'
+  port: 5432
+  host: 'localhost'
+  username: 'demo'
+  password: 'demo'
+  database: 'demo_contacts'
+
+logging:
+  version: 1
+  request_logger: base
+  formatters:
+    brief:
+      format: '%(asctime)s %(name)s %(levelname)s : %(message)s'
+    detailed:
+      format: 'time="%(asctime)s" logger="%(name)s" level="%(levelname)s" %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: CRITICAL
+      formatter: brief
+      stream: ext://sys.stdout
+    file:
+      class : logging.handlers.RotatingFileHandler
+      level: DEBUG
+      formatter: detailed
+      filename: /tmp/base_app.log
+      backupCount: 3
+  loggers:
+    base:
+      level: DEBUG
+      handlers:
+        - console
+        - file
+      propagate: no
+    tornado.access:
+      level: DEBUG
+      handlers:
+        - file
+    tornado.application:
+      level: DEBUG
+      handlers:
+        - file
+    tornado.general:
+      level: DEBUG
+      handlers:
+        - file
+  root:
+    level: WARNING
+    handlers:
+      - console
+
+*** File '(Unnamed)'
+android
+1.4
+\n
+config
+#
+application
+application
+bcr
+#
+clean
+redis
+
+*** File '(Unnamed)'
+
+*** File '(Unnamed)'
+\n#
+\n#!
+blog
+
+"
+\n#
+0.1
+\n#
+contacts
+contacts
+config.docker.yaml
+config.local.yaml
+users/api/users.py
+test.sh
+test.sh
+test.sh
+test.sh
+test.sh
+test.sh
+wait4db.py
+config/config.local.yaml
+* Startup Log *
+* Shell 1 *
+
+*** File '(Unnamed)'
+
+*** File '* Startup Log *'
+android
+1.4
+\n
+config
+#
+application
+application
+bcr
+#
+clean
+redis
+Processing '/usr/local/Cellar/joe/4.6/etc/joe/joerc'...
+Processing '/usr/local/Cellar/joe/4.6/etc/joe/ftyperc'...
+Finished processing /usr/local/Cellar/joe/4.6/etc/joe/ftyperc
+Finished processing /usr/local/Cellar/joe/4.6/etc/joe/joerc
+
+*** File '(Unnamed)'
+config.docker.yaml
+config.local.yaml
+users/api/users.py
+test.sh
+test.sh
+test.sh
+test.sh
+test.sh
+test.sh
+wait4db.py
+config/config.local.yaml
+* Startup Log *
+* Shell 1 *
+
+*** File '* Startup Log *'
+Processing '/usr/local/Cellar/joe/4.6/etc/joe/joerc'...
+Processing '/usr/local/Cellar/joe/4.6/etc/joe/ftyperc'...
+Finished processing /usr/local/Cellar/joe/4.6/etc/joe/ftyperc
+Finished processing /usr/local/Cellar/joe/4.6/etc/joe/joerc

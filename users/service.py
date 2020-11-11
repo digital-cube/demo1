@@ -11,4 +11,4 @@ if __name__ == "__main__":
     config = base.config
     config.load_from_yaml(my_dir_name + f'/config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
 
-    base.run(debug=True)
+    base.run(debug=True, port=config.conf['port'])

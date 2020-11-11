@@ -7,6 +7,8 @@ port: &port 9001
 
 store:
   type: 'redis'
+  host: 'localhost'
+  port: '6379'
 
 authorization:
   key: 'Authorization'
