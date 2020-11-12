@@ -31,6 +31,15 @@ class SetUpTestUserServiceBase(test.BaseTest):
         importlib.import_module('api.users')
         self.my_app = app.make_app(debug=True)
 
+        from base import store
+        with open(os.path.dirname(os.path.realpath(__file__)) + '/../keys/jwt.public_key') as pubkey:
+            store.set('users_service_public_key', pubkey.read())
+
+        config.load_private_key(os.path.dirname(os.path.realpath(__file__)) + '/../keys/jwt.private_key')
+
+        # with open(os.path.dirname(os.path.realpath(__file__)) + '/../keys/jwt.private_key') as pkey:
+        #     store.set('users_service_private_key', pkey.read())
+
         super().setUp()
         registry.test_port = self.get_http_port()
 
