@@ -1,3 +1,2 @@
 #!/bin/sh
-cd users && ./test.sh && cd - && \
-cd contacts && ./test.sh && cd -
+.venv/bin/python3 -m unittest tests/test_*py
