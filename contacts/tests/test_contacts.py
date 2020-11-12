@@ -5,8 +5,20 @@ from unittest.mock import patch
 from tests.test_base import token2user, SetUpTestContactServiceBase, mockJWT, id_session
 
 
+async def mocked_ipc_call(request, service, method, endpoint, body=None):
+    if (service, method, endpoint) == ('users', 'get', 'about'):
+        return {"service": "users"}
+
+    print('nema kombinacije rejzujem')
+    raise NameError(f"MOCKED_IPC_CALL not implemented for {(service, method, endpoint)}")
+
 @patch('base.token.token2user', token2user)
 class Test(SetUpTestContactServiceBase):
+
+    @patch('base.ipc.call', mocked_ipc_call)
+    def test_ipc(self):
+        self.api(None, 'GET', self.prefix() + '/test_ipc')
+        self.show_last_result()
 
     def test(self):
         self.api(None, 'GET', self.prefix() + '/about', expected_code=http.status.OK,
@@ -80,7 +92,6 @@ class Test(SetUpTestContactServiceBase):
 
         self.api(mockJWT, 'GET', self.prefix() + f'/{id_session}', expected_code=http.status.NOT_FOUND)
 
-
     def test_user_delete_contact(self):
         self.api(mockJWT, 'POST', self.prefix() + '/',
                  body={'contact': {'name': 'Igor',
@@ -99,6 +110,7 @@ class Test(SetUpTestContactServiceBase):
 
         self.assertTrue(self.last_result['summary']['total_items'] == 0)
         self.assertTrue(len(self.last_result['contacts']) == 0)
+
 
 if __name__ == '__main__':
     unittest.main()

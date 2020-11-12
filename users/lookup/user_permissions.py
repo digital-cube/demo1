@@ -3,11 +3,12 @@ USER = 2 ** 0
 ADMIN = 2 ** 1
 
 
-
-
-
-def all_permissions():
+def publish_permissions():
     import inspect
+    import json
+    import base
+
+    print("--- publish_permissions ---")
 
     my_name = inspect.stack()[0][3]
 
@@ -18,6 +19,7 @@ def all_permissions():
             continue
         permissions[perm] = eval(perm)
 
-    return permissions
+    base.store.set('permissions', json.dumps(permissions))
 
 
+publish_permissions()

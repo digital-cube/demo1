@@ -8,11 +8,22 @@ import orm.models as models
 
 
 @base.route('/about')
-class TestRouteHandler(base.Base):
+class AboutServiceHandler(base.Base):
 
     @base.api()
     async def get(self):
         return {'service': 'contacts'}
+
+
+async def ttt():
+    return 'ttt'
+
+@base.route('/test_ipc')
+class TestHandler(base.Base):
+
+    @base.api()
+    async def get(self):
+        return await base.ipc.call(self.request, 'users', 'get', 'about')
 
 
 @base.route('')

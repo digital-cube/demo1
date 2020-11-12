@@ -8,7 +8,7 @@ import datetime
 import lookup.user_permissions as perm
 import sqlalchemy
 
-base.route.set('prefix', '/api/users')
+base.route.set('prefix', base.config.conf['prefix'])
 
 
 @base.route('/about')
@@ -16,7 +16,8 @@ class TestRouteHandler(base.Base):
 
     @base.api()
     async def get(self):
-        return {'test': True}
+        # raise http.HttpErrorNotFound(id_message="NOT_FOUND", message="Not Found")
+        return {'service': 'users'}
 
 
 def format_password(user, password):
@@ -124,15 +125,6 @@ def change_user_data(user: models.User, data: dict, change_by: models.User = Non
                                                message='Problem updateing user')
 
     return updated
-
-
-@base.route('/permissions')
-class PermissionsHandler(base.Base):
-
-    @base.api()
-    async def get(self):
-        from lookup.user_permissions import all_permissions
-        return all_permissions()
 
 
 @base.route('/admin')

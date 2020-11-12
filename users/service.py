@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-import base
 import os
+import base
+import importlib
 
 if __name__ == "__main__":
-    import api.users
-
-    full_path = os.path.realpath(__file__)
-    my_dir_name = os.path.dirname(full_path)
-
     config = base.config
+    my_dir_name = os.path.dirname(os.path.realpath(__file__))
     config.load_from_yaml(my_dir_name + f'/config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
 
-    base.run(debug=True, port=config.conf['port'])
+    importlib.import_module('api.users')
+    importlib.import_module('lookup.user_permissions')
+
+    base.run(debug=True)
