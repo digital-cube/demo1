@@ -2,13 +2,17 @@ import base
 from base import http
 from base import paginate
 
-base.route.set('prefix', base.config.conf['services']['contacts']['prefix'])
+if base.config.conf['apptype'] == 'monolite':
+    base.route.set('prefix', base.config.conf['services']['contacts']['prefix'])
+else:
+    base.route.set('prefix', base.config.conf['prefix'])
+
 
 import orm.models as models
 
 
 @base.route('/about')
-class AboutServiceHandler(base.Base):
+class AboutContactsServiceHandler(base.Base):
 
     @base.api()
     async def get(self):
@@ -17,6 +21,7 @@ class AboutServiceHandler(base.Base):
 
 async def ttt():
     return 'ttt'
+
 
 @base.route('/test_ipc')
 class TestHandler(base.Base):
@@ -65,7 +70,7 @@ class ContactsRouteHandler(base.Base):
 
 
 @base.route('/:id_contact')
-class SinglleContactsRouteHandler(base.Base):
+class SingleContactRouteHandler(base.Base):
 
     def can_use(self, contact):
         if not contact:

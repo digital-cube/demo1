@@ -5,9 +5,7 @@ app_version: '0.0.1'
 host: 'localhost'
 port: &port 9000
 
-services:
-  users:
-    prefix: '/api/users'
+apptype: 'micro-service'
 
 store:
   type: 'redis'

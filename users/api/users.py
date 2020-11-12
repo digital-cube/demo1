@@ -12,11 +12,14 @@ import lookup.user_permissions as perm
 
 import sqlalchemy
 
-base.route.set('prefix', base.config.conf['services']['users']['prefix'])
+if base.config.conf['apptype'] == 'monolite':
+    base.route.set('prefix', base.config.conf['services']['users']['prefix'])
+else:
+    base.route.set('prefix', base.config.conf['prefix'])
 
 
 @base.route('/about')
-class TestRouteHandler(base.Base):
+class AboutUserServiceHandler(base.Base):
 
     @base.api()
     async def get(self):

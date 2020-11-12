@@ -1,27 +1,33 @@
-name: 'contacts'
-description: 'base3 contacts application'
-prefix: '/api/contacts'
+name: 'demoapp'
+description: 'base3 demo application'
+prefix: '/'
 app_version: '0.0.1'
-host: 'contacts'
-port: &port 80
+host: 'localhost'
+port: &port 9000
 
-apptype: 'micro-service'
+apptype: 'monolite'
+
+services:
+  users:
+    name: 'Users'
+    prefix: '/api/users'
+  contacts:
+    name: 'Contacts'
+    prefix: '/api/contacts'
 
 store:
-  type: 'redis'
-  host: 'redis'
-  port: '6379'
-
-authorization:
-  key: 'Authorization'
+  type: 'memory'
 
 db:
   type: 'postgres'
   port: 5432
-  host: 'postgres'
+  host: 'localhost'
   username: 'demo'
   password: 'demo'
-  database: 'contacts'
+  database: 'demo'
+
+authorization:
+  key: 'Authorization'
 
 logging:
   version: 1
@@ -41,7 +47,7 @@ logging:
       class : logging.handlers.RotatingFileHandler
       level: DEBUG
       formatter: detailed
-      filename: /tmp/base_app.log
+      filename: /tmp/demo_users.log
       backupCount: 3
   loggers:
     base:
@@ -66,4 +72,3 @@ logging:
     level: WARNING
     handlers:
       - console
-

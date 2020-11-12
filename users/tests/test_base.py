@@ -16,20 +16,12 @@ class SetUpTestUserServiceBase(test.BaseTest):
         return '/api/users'
 
     def setUp(self):
-        from base import registry, Base, orm, app, config
+        from base import registry, orm, app, config
         config.load_from_yaml(os.path.dirname(os.path.realpath(__file__)) + f'/../config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
         config.conf['db']['database'] = f"test_{config.conf['db']['database']}"
 
-        # registry.register({'name': 'users',
-        #                    'prefix': '/api/users',
-        #                    'port': None,
-        #                    # "db": _config.db_config
-        #                    })
-
         importlib.import_module('orm.models')
         registry.test = True
-
-        # db_config = registry.db('users')
 
         orm = orm.init_orm(config.conf['db'])
 
