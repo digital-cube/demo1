@@ -12,7 +12,7 @@ import lookup.user_permissions as perm
 
 import sqlalchemy
 
-if base.config.conf['apptype'] == 'monolite':
+if base.config.conf['apptype'] == 'monolith':
     base.route.set('prefix', base.config.conf['services']['users']['prefix'])
 else:
     base.route.set('prefix', base.config.conf['prefix'])

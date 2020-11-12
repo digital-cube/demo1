@@ -32,6 +32,12 @@ class SetUpTestAllServices(test.BaseTest):
 
         self.my_app = app.make_app(debug=True)
 
+        from base import store
+        with open(os.path.dirname(os.path.realpath(__file__)) + '/../users/keys/jwt.public_key') as pubkey:
+            store.set('users_service_public_key', pubkey.read())
+
+        config.load_private_key(os.path.dirname(os.path.realpath(__file__)) + '/../users/keys/jwt.private_key')
+
         super().setUp()
         registry.test_port = self.get_http_port()
 
