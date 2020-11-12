@@ -8,8 +8,6 @@ def publish_permissions():
     import json
     import base
 
-    print("--- publish_permissions ---")
-
     my_name = inspect.stack()[0][3]
 
     permissions = {}
