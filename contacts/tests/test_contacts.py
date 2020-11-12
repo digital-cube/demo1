@@ -9,16 +9,16 @@ async def mocked_ipc_call(request, service, method, endpoint, body=None):
     if (service, method, endpoint) == ('users', 'get', 'about'):
         return {"service": "users"}
 
-    print('nema kombinacije rejzujem')
-    raise NameError(f"MOCKED_IPC_CALL not implemented for {(service, method, endpoint)}")
+    raise NameError(f"mocked_ipc_call not implemented for {(service, method, endpoint)}")
+
 
 @patch('base.token.token2user', token2user)
 class Test(SetUpTestContactServiceBase):
 
     @patch('base.ipc.call', mocked_ipc_call)
     def test_ipc(self):
-        self.api(None, 'GET', self.prefix() + '/test_ipc')
-        self.show_last_result()
+        self.api(None, 'GET', self.prefix() + '/test_ipc', expected_code=http.status.OK,
+                 expected_result={'service': 'users'})
 
     def test(self):
         self.api(None, 'GET', self.prefix() + '/about', expected_code=http.status.OK,

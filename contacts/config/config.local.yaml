@@ -1,9 +1,13 @@
-name: 'contacts demo'
+name: 'contacts'
 description: 'base3 application'
-prefix: '/api/contacts'
+#prefix: '/api/contacts'
 app_version: '0.0.1'
 host: 'localhost'
 port: &port 9001
+
+services:
+  contacts:
+    prefix: '/api/contacts'
 
 store:
   type: 'redis'

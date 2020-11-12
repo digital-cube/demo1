@@ -4,11 +4,15 @@ from base import paginate, http
 import bcrypt
 
 import orm.models as models
+
 import datetime
+
 import lookup.user_permissions as perm
+
+
 import sqlalchemy
 
-base.route.set('prefix', base.config.conf['prefix'])
+base.route.set('prefix', base.config.conf['services']['users']['prefix'])
 
 
 @base.route('/about')
@@ -16,7 +20,6 @@ class TestRouteHandler(base.Base):
 
     @base.api()
     async def get(self):
-        # raise http.HttpErrorNotFound(id_message="NOT_FOUND", message="Not Found")
         return {'service': 'users'}
 
 

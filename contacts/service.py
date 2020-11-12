@@ -1,19 +1,13 @@
 #!/usr/bin/env python
 import base
 import os
+import importlib
 
 if __name__ == "__main__":
 
-    import api.contacts
-
     my_dir_name = os.path.dirname(os.path.realpath(__file__))
+    base.config.load_from_yaml(my_dir_name + f'/config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
 
-    config = base.config
-    config.load_from_yaml(my_dir_name + f'/config/config.{os.getenv("ENVIRONMENT", "local")}.yaml')
+    importlib.import_module('api.contacts')
 
-    # import lookup.permissions as perm
-
-    # print("ADMIN2", perm.permission['ADMIN'])
-    # print("USER", perm.USER)
-
-    base.run(debug=True, port=config.conf['port'])
+    base.run(debug=True)

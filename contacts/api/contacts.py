@@ -2,7 +2,7 @@ import base
 from base import http
 from base import paginate
 
-base.route.set('prefix', '/api/contacts')
+base.route.set('prefix', base.config.conf['services']['contacts']['prefix'])
 
 import orm.models as models
 
